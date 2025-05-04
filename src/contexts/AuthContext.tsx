@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -6,6 +5,7 @@ interface User {
   id: string;
   name: string;
   email: string;
+  role: "admin" | "employee"; // Added role property
 }
 
 interface AuthState {
@@ -53,11 +53,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Validate credentials (in a real app, this would be done by your backend)
-      if (email === "user@example.com" && password === "password") {
+      if (email === "admin@example.com" && password === "password") {
         const mockUser = {
           id: "1",
+          name: "Admin User",
+          email: email,
+          role: "admin" as const,
+        };
+        
+        localStorage.setItem("user", JSON.stringify(mockUser));
+        setUser(mockUser);
+        toast({
+          title: "Success!",
+          description: "You have successfully logged in as admin.",
+        });
+      } else if (email === "employee@example.com" && password === "password") {
+        const mockUser = {
+          id: "2",
+          name: "Employee User",
+          email: email,
+          role: "employee" as const,
+        };
+        
+        localStorage.setItem("user", JSON.stringify(mockUser));
+        setUser(mockUser);
+        toast({
+          title: "Success!",
+          description: "You have successfully logged in as employee.",
+        });
+      } else if (email === "user@example.com" && password === "password") {
+        // Keep backward compatibility
+        const mockUser = {
+          id: "3",
           name: "John Doe",
           email: email,
+          role: "employee" as const,
         };
         
         localStorage.setItem("user", JSON.stringify(mockUser));
