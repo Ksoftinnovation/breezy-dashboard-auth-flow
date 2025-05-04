@@ -14,6 +14,8 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +44,12 @@ const App = () => (
                 <Route index element={<Dashboard />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="profile" element={<Profile />} />
+
+                {/* Admin routes */}
+                <Route path="admin" element={<AdminDashboard />} />
+                
+                {/* Employee routes */}
+                <Route path="employee" element={<EmployeeDashboard />} />
               </Route>
               
               {/* Fallback route */}

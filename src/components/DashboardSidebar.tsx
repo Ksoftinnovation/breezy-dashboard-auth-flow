@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -8,27 +8,38 @@ import {
   SidebarContent,
   SidebarHeader,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
 } from "@/components/ui/sidebar";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   ArrowLeft, 
   ArrowRight, 
   LayoutDashboard, 
   LogIn, 
   Settings, 
-  User 
+  User,
+  UserCog,
+  Users
 } from "lucide-react";
 
 export function DashboardSidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const { logout, user } = useAuth();
+  const location = useLocation();
+  const isMobile = useIsMobile();
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
   };
 
-  const navItems = [
+  // Common navigation items
+  const commonNavItems = [
     {
       icon: <LayoutDashboard className="h-5 w-5" />,
       label: "Dashboard",
@@ -46,10 +57,32 @@ export function DashboardSidebar() {
     },
   ];
 
+  // Role-specific navigation items
+  const adminNavItems = [
+    {
+      icon: <UserCog className="h-5 w-5" />,
+      label: "Admin Dashboard",
+      path: "/dashboard/admin",
+    }
+  ];
+
+  const employeeNavItems = [
+    {
+      icon: <Users className="h-5 w-5" />,
+      label: "Employee Dashboard",
+      path: "/dashboard/employee",
+    }
+  ];
+
+  // Determine which role-specific items to show
+  // In a real app, this would check the user role from your auth context
+  const roleSpecificItems = user?.role === "admin" ? adminNavItems : employeeNavItems;
+
   return (
     <Sidebar
-      className={`h-screen border-r transition-all duration-300 ${
-        collapsed ? "w-[70px]" : "w-[240px]"
+      collapsible={isMobile ? "offcanvas" : "icon"}
+      className={`transition-width duration-300 ${
+        collapsed && !isMobile ? "w-[70px]" : "w-[240px]"
       }`}
     >
       <SidebarHeader className="flex h-14 items-center border-b px-4">
@@ -58,44 +91,69 @@ export function DashboardSidebar() {
             <span className="text-lg font-semibold">App Dashboard</span>
           )}
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="ml-auto"
-          onClick={toggleSidebar}
-        >
-          {collapsed ? (
-            <ArrowRight className="h-4 w-4" />
-          ) : (
-            <ArrowLeft className="h-4 w-4" />
-          )}
-        </Button>
+        {!isMobile && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="ml-auto"
+            onClick={toggleSidebar}
+          >
+            {collapsed ? (
+              <ArrowRight className="h-4 w-4" />
+            ) : (
+              <ArrowLeft className="h-4 w-4" />
+            )}
+          </Button>
+        )}
       </SidebarHeader>
       
       <SidebarContent>
         <ScrollArea className="h-[calc(100vh-8rem)]">
-          <div className="space-y-1 p-2">
-            {navItems.map((item) => (
-              <NavLink 
-                key={item.path} 
-                to={item.path}
-                className={({ isActive }) => 
-                  `flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors
-                   ${isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 
-                   'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'}`
-                }
-              >
-                {item.icon}
-                {!collapsed && <span>{item.label}</span>}
-              </NavLink>
-            ))}
-          </div>
+          <SidebarGroup>
+            <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+            <SidebarMenu>
+              {commonNavItems.map((item) => (
+                <SidebarMenuItem key={item.path}>
+                  <SidebarMenuButton
+                    isActive={location.pathname === item.path}
+                    asChild
+                    tooltip={collapsed ? item.label : undefined}
+                  >
+                    <NavLink to={item.path}>
+                      {item.icon}
+                      <span>{item.label}</span>
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
+          
+          <SidebarGroup>
+            <SidebarGroupLabel>{user?.role === "admin" ? "Admin" : "Employee"}</SidebarGroupLabel>
+            <SidebarMenu>
+              {roleSpecificItems.map((item) => (
+                <SidebarMenuItem key={item.path}>
+                  <SidebarMenuButton
+                    isActive={location.pathname === item.path}
+                    asChild
+                    tooltip={collapsed ? item.label : undefined}
+                  >
+                    <NavLink to={item.path}>
+                      {item.icon}
+                      <span>{item.label}</span>
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
         </ScrollArea>
       </SidebarContent>
       
       <SidebarFooter className="border-t p-2">
         <div className="flex items-center justify-between p-2">
-          {!collapsed && (
+          {!collapsed && !isMobile && (
             <div className="flex flex-col">
               <span className="text-sm font-medium">{user?.name}</span>
               <span className="text-xs text-muted-foreground truncate max-w-[150px]">
