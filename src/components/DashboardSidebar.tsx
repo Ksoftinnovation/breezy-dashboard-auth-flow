@@ -23,7 +23,6 @@ import {
   LayoutDashboard, 
   LogIn, 
   Settings, 
-  User,
   UserCog,
   Users,
   FileText,
@@ -124,6 +123,7 @@ export function DashboardSidebar() {
             size="icon"
             className="ml-auto"
             onClick={toggleSidebar}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {collapsed ? (
               <ArrowRight className="h-4 w-4" />
@@ -146,7 +146,7 @@ export function DashboardSidebar() {
                     asChild
                     tooltip={collapsed ? item.label : undefined}
                   >
-                    <NavLink to={item.path}>
+                    <NavLink to={item.path} className="w-full">
                       {item.icon}
                       <span>{item.label}</span>
                     </NavLink>
@@ -166,7 +166,7 @@ export function DashboardSidebar() {
                     asChild
                     tooltip={collapsed ? item.label : undefined}
                   >
-                    <NavLink to={item.path}>
+                    <NavLink to={item.path} className="w-full">
                       {item.icon}
                       <span>{item.label}</span>
                     </NavLink>
@@ -176,7 +176,6 @@ export function DashboardSidebar() {
             </SidebarMenu>
           </SidebarGroup>
           
-          {/* Only show role-specific items if they exist */}
           {roleSpecificItems.length > 0 && (
             <SidebarGroup>
               <SidebarGroupLabel>{user?.role === "admin" ? "Admin" : "Employee"}</SidebarGroupLabel>
@@ -188,7 +187,7 @@ export function DashboardSidebar() {
                       asChild
                       tooltip={collapsed ? item.label : undefined}
                     >
-                      <NavLink to={item.path}>
+                      <NavLink to={item.path} className="w-full">
                         {item.icon}
                         <span>{item.label}</span>
                       </NavLink>
@@ -210,14 +209,14 @@ export function DashboardSidebar() {
                 <AvatarFallback>{user?.name?.charAt(0) || "U"}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col">
-                <span className="text-sm font-medium">{user?.name || "shadcn"}</span>
+                <span className="text-sm font-medium">{user?.name || "User"}</span>
                 <span className="text-xs text-muted-foreground truncate max-w-[140px]">
-                  {user?.email || "m@example.com"}
+                  {user?.email || "user@example.com"}
                 </span>
               </div>
             </div>
           )}
-          <div className="flex items-center gap-1 ml-auto">
+          <div className={`flex items-center gap-1 ${(!collapsed || isMobile) ? "ml-auto" : "mx-auto"}`}>
             <ThemeToggle />
             <Button
               variant="ghost"

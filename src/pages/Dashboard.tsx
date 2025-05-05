@@ -10,14 +10,14 @@ export default function Dashboard() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">
-          Welcome back, {user?.name}!
+          Welcome back, {user?.name || "User"}!
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle>Projects</CardTitle>
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <Card className="shadow-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg sm:text-xl">Projects</CardTitle>
             <CardDescription>Your active projects</CardDescription>
           </CardHeader>
           <CardContent>
@@ -25,9 +25,9 @@ export default function Dashboard() {
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Tasks</CardTitle>
+        <Card className="shadow-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg sm:text-xl">Tasks</CardTitle>
             <CardDescription>Your pending tasks</CardDescription>
           </CardHeader>
           <CardContent>
@@ -35,9 +35,9 @@ export default function Dashboard() {
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Messages</CardTitle>
+        <Card className="shadow-sm sm:col-span-2 lg:col-span-1">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg sm:text-xl">Messages</CardTitle>
             <CardDescription>Unread messages</CardDescription>
           </CardHeader>
           <CardContent>
@@ -46,19 +46,19 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
+      <div className="grid gap-4 sm:gap-6">
+        <Card className="shadow-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg sm:text-xl">Recent Activity</CardTitle>
             <CardDescription>Your recent actions</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {[1, 2, 3, 4, 5].map((item) => (
-                <div key={item} className="flex items-center gap-4">
-                  <div className="h-2 w-2 rounded-full bg-primary"></div>
-                  <div>
-                    <p className="text-sm font-medium">
+                <div key={item} className="flex items-center gap-2 sm:gap-4">
+                  <div className="h-2 w-2 rounded-full bg-primary flex-shrink-0"></div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">
                       Activity {item}
                     </p>
                     <p className="text-xs text-muted-foreground">

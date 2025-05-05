@@ -16,7 +16,7 @@ export default function DashboardLayout() {
   const generateBreadcrumbs = () => {
     const paths = location.pathname.split('/').filter(Boolean);
     
-    // Map paths to breadcrumb items
+    // Map paths to breadcrumb items with separators
     return paths.map((path, index) => {
       // Create the path up to this point
       const href = `/${paths.slice(0, index + 1).join('/')}`;
@@ -24,23 +24,27 @@ export default function DashboardLayout() {
       
       let title = path.charAt(0).toUpperCase() + path.slice(1);
       
+      // Return BreadcrumbItem with separator
       return (
-        <BreadcrumbItem key={href}>
-          {isLast ? (
-            <BreadcrumbPage>{title}</BreadcrumbPage>
-          ) : (
-            <BreadcrumbLink as={Link} to={href}>
-              {title}
-            </BreadcrumbLink>
-          )}
-        </BreadcrumbItem>
+        <React.Fragment key={href}>
+          <BreadcrumbItem>
+            {isLast ? (
+              <BreadcrumbPage>{title}</BreadcrumbPage>
+            ) : (
+              <BreadcrumbLink asChild>
+                <Link to={href}>{title}</Link>
+              </BreadcrumbLink>
+            )}
+          </BreadcrumbItem>
+          {!isLast && <BreadcrumbSeparator />}
+        </React.Fragment>
       );
     });
   };
   
   return (
     <SidebarProvider>
-      <div className="flex h-screen w-full">
+      <div className="flex h-screen w-full overflow-hidden">
         {isMobile ? (
           <>
             <Sheet>
@@ -50,7 +54,7 @@ export default function DashboardLayout() {
                   <span className="sr-only">Toggle Menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="p-0 w-[280px]">
+              <SheetContent side="left" className="p-0 w-[280px] max-w-[80vw]">
                 <DashboardSidebar />
               </SheetContent>
             </Sheet>
@@ -59,22 +63,20 @@ export default function DashboardLayout() {
                 <Breadcrumb>
                   <BreadcrumbList>
                     <BreadcrumbItem>
-                      <BreadcrumbLink as={Link} to="/dashboard">
-                        Building Your Application
+                      <BreadcrumbLink asChild>
+                        <Link to="/dashboard">Dashboard</Link>
                       </BreadcrumbLink>
                     </BreadcrumbItem>
-                    <BreadcrumbSeparator>
-                      <ChevronRight className="h-4 w-4" />
-                    </BreadcrumbSeparator>
+                    <BreadcrumbSeparator />
                     {generateBreadcrumbs().length > 0 ? (
                       generateBreadcrumbs()
                     ) : (
-                      <BreadcrumbPage>Dashboard</BreadcrumbPage>
+                      <BreadcrumbPage>Home</BreadcrumbPage>
                     )}
                   </BreadcrumbList>
                 </Breadcrumb>
               </div>
-              <div className="p-6">
+              <div className="p-4 md:p-6">
                 <Outlet />
               </div>
             </main>
@@ -87,22 +89,20 @@ export default function DashboardLayout() {
                 <Breadcrumb>
                   <BreadcrumbList>
                     <BreadcrumbItem>
-                      <BreadcrumbLink as={Link} to="/dashboard">
-                        Building Your Application
+                      <BreadcrumbLink asChild>
+                        <Link to="/dashboard">Dashboard</Link>
                       </BreadcrumbLink>
                     </BreadcrumbItem>
-                    <BreadcrumbSeparator>
-                      <ChevronRight className="h-4 w-4" />
-                    </BreadcrumbSeparator>
+                    <BreadcrumbSeparator />
                     {generateBreadcrumbs().length > 0 ? (
                       generateBreadcrumbs()
                     ) : (
-                      <BreadcrumbPage>Dashboard</BreadcrumbPage>
+                      <BreadcrumbPage>Home</BreadcrumbPage>
                     )}
                   </BreadcrumbList>
                 </Breadcrumb>
               </div>
-              <div className="p-6">
+              <div className="p-4 md:p-6">
                 <Outlet />
               </div>
             </main>
