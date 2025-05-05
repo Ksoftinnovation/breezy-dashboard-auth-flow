@@ -25,8 +25,11 @@ import {
   Settings, 
   User,
   UserCog,
-  Users
+  Users,
+  FileText,
+  Inbox
 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function DashboardSidebar() {
   const [collapsed, setCollapsed] = useState(false);
@@ -39,22 +42,40 @@ export function DashboardSidebar() {
   };
 
   // Common navigation items
-  const commonNavItems = [
+  const navigationItems = [
     {
       icon: <LayoutDashboard className="h-5 w-5" />,
       label: "Dashboard",
       path: "/dashboard",
     },
     {
+      icon: <FileText className="h-5 w-5" />,
+      label: "Documentation",
+      path: "/dashboard/documentation",
+    },
+    {
+      icon: <Inbox className="h-5 w-5" />,
+      label: "Inbox",
+      path: "/dashboard/inbox",
+    },
+    {
       icon: <Settings className="h-5 w-5" />,
       label: "Settings",
       path: "/dashboard/settings",
     },
+  ];
+
+  const projects = [
     {
-      icon: <User className="h-5 w-5" />,
-      label: "Profile",
-      path: "/dashboard/profile",
+      icon: <FileText className="h-5 w-5" />,
+      label: "Design Engineering",
+      path: "/dashboard/design",
     },
+    {
+      icon: <FileText className="h-5 w-5" />,
+      label: "Sales & Marketing",
+      path: "/dashboard/sales",
+    }
   ];
 
   // Role-specific navigation items
@@ -75,20 +96,26 @@ export function DashboardSidebar() {
   ];
 
   // Determine which role-specific items to show
-  // In a real app, this would check the user role from your auth context
   const roleSpecificItems = user?.role === "admin" ? adminNavItems : employeeNavItems;
 
   return (
     <Sidebar
       collapsible={isMobile ? "offcanvas" : "icon"}
-      className={`transition-width duration-300 ${
-        collapsed && !isMobile ? "w-[70px]" : "w-[240px]"
+      className={`transition-width duration-300 border-r ${
+        collapsed && !isMobile ? "w-[70px]" : "w-[280px]"
       }`}
     >
-      <SidebarHeader className="flex h-14 items-center border-b px-4">
+      <SidebarHeader className="flex h-16 items-center px-4">
         <div className="flex items-center gap-2">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src="/placeholder.svg" alt="Company" />
+            <AvatarFallback>AC</AvatarFallback>
+          </Avatar>
           {!collapsed && (
-            <span className="text-lg font-semibold">App Dashboard</span>
+            <div className="flex flex-col">
+              <span className="font-semibold">Acme Inc</span>
+              <span className="text-xs text-muted-foreground">Enterprise</span>
+            </div>
           )}
         </div>
         {!isMobile && (
@@ -110,9 +137,9 @@ export function DashboardSidebar() {
       <SidebarContent>
         <ScrollArea className="h-[calc(100vh-8rem)]">
           <SidebarGroup>
-            <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+            <SidebarGroupLabel>Platform</SidebarGroupLabel>
             <SidebarMenu>
-              {commonNavItems.map((item) => (
+              {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton
                     isActive={location.pathname === item.path}
@@ -130,9 +157,9 @@ export function DashboardSidebar() {
           </SidebarGroup>
           
           <SidebarGroup>
-            <SidebarGroupLabel>{user?.role === "admin" ? "Admin" : "Employee"}</SidebarGroupLabel>
+            <SidebarGroupLabel>Projects</SidebarGroupLabel>
             <SidebarMenu>
-              {roleSpecificItems.map((item) => (
+              {projects.map((item) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton
                     isActive={location.pathname === item.path}
@@ -148,20 +175,49 @@ export function DashboardSidebar() {
               ))}
             </SidebarMenu>
           </SidebarGroup>
+          
+          {/* Only show role-specific items if they exist */}
+          {roleSpecificItems.length > 0 && (
+            <SidebarGroup>
+              <SidebarGroupLabel>{user?.role === "admin" ? "Admin" : "Employee"}</SidebarGroupLabel>
+              <SidebarMenu>
+                {roleSpecificItems.map((item) => (
+                  <SidebarMenuItem key={item.path}>
+                    <SidebarMenuButton
+                      isActive={location.pathname === item.path}
+                      asChild
+                      tooltip={collapsed ? item.label : undefined}
+                    >
+                      <NavLink to={item.path}>
+                        {item.icon}
+                        <span>{item.label}</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroup>
+          )}
         </ScrollArea>
       </SidebarContent>
       
       <SidebarFooter className="border-t p-2">
         <div className="flex items-center justify-between p-2">
           {!collapsed && !isMobile && (
-            <div className="flex flex-col">
-              <span className="text-sm font-medium">{user?.name}</span>
-              <span className="text-xs text-muted-foreground truncate max-w-[150px]">
-                {user?.email}
-              </span>
+            <div className="flex items-center gap-2">
+              <Avatar className="h-6 w-6">
+                <AvatarImage src="/lovable-uploads/7c7365d6-3dc1-4788-93b8-907065d95d97.png" alt={user?.name || "User"} />
+                <AvatarFallback>{user?.name?.charAt(0) || "U"}</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col">
+                <span className="text-sm font-medium">{user?.name || "shadcn"}</span>
+                <span className="text-xs text-muted-foreground truncate max-w-[140px]">
+                  {user?.email || "m@example.com"}
+                </span>
+              </div>
             </div>
           )}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 ml-auto">
             <ThemeToggle />
             <Button
               variant="ghost"
